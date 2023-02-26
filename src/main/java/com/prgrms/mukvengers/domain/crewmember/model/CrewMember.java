@@ -3,6 +3,7 @@ package com.prgrms.mukvengers.domain.crewmember.model;
 import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
+import static org.springframework.util.Assert.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.locationtech.jts.geom.Point;
 
 import com.prgrms.mukvengers.domain.crew.model.Crew;
 import com.prgrms.mukvengers.domain.user.model.User;
@@ -48,10 +50,17 @@ public class CrewMember extends BaseEntity {
 	private boolean ready;
 
 	@Builder
-	protected CrewMember(User user, Crew crew, boolean blocked, boolean ready) {
+	protected CrewMember(User user, Crew crew) {
 		this.user = user;
 		this.crew = crew;
-		this.blocked = blocked;
-		this.ready = ready;
 	}
+
+	public void validateUser(User user) {
+		notNull(user, "유효하지 않는 사용자입니다.");
+	}
+
+	public void validateCrew(Crew crew) {
+		notNull(crew, "유효하지 않는 모임입니다.");
+	}
+
 }
