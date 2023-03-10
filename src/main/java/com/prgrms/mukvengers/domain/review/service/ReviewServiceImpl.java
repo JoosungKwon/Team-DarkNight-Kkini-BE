@@ -1,6 +1,7 @@
 package com.prgrms.mukvengers.domain.review.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -129,15 +130,16 @@ public class ReviewServiceImpl implements ReviewService {
 
 		return crewMemberRepository.findAllByCrewId(crewId)
 			.stream()
-			.map(crewMember -> toRevieweeListResponse(crewId, reviewer, crewMember))
+			.filter(crewMember -> !Objects.equals(crewMember.getUserId(), reviewer.getId()))
+			.map(crewMember -> toRevieweeResponse(crewId, reviewer, crewMember))
 			.toList();
 	}
 
-	private RevieweeListResponse toRevieweeListResponse(Long crewId, User reviewer, CrewMember crewMember) {
-		User crewMemberUser = getUserByUserId(crewMember.getUserId());
-		Optional<Review> reviewResult = reviewRepository.findByReview(crewId, reviewer.getId(), crewMemberUser.getId());
-		boolean isReviewed = reviewResult.isPresent();
-		return reviewMapper.toRevieweeListResponse(crewMemberUser, crewMember.getCrewMemberRole(), isReviewed);
+	private RevieweeListResponse toRevieweeResponse(Long crewId, User reviewer, CrewMember crewMember) {
+		User reviewee = getUserByUserId(crewMember.getUserId());
+		Optional<Review> review = reviewRepository.findByReview(crewId, reviewer.getId(), reviewee.getId());
+		boolean isReviewed = review.isPresent();
+		return reviewMapper.toRevieweeListResponse(reviewee, crewMember.getCrewMemberRole(), isReviewed);
 	}
 
 	private User getUserByUserId(Long userId) {
