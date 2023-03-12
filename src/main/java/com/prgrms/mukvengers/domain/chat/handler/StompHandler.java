@@ -59,8 +59,6 @@ public class StompHandler implements ChannelInterceptor {
 			validateUserInCrew(userId, crewId);
 
 		} else if (StompCommand.DISCONNECT == command) { // Websocket 연결 종료
-			Long userId = (Long)getValue(accessor, "userId");
-			log.info("DISCONNECTED userId : {}", userId);
 		}
 
 		log.info("header : " + message.getHeaders());
